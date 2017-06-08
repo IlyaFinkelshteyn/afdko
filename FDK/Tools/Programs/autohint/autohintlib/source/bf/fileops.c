@@ -538,10 +538,6 @@ extern char *
 ReadNames(char *cname, char *filename, long *masters, long *hintDir,
       FILE *stream)
    {
-#ifdef IS_GGL
-	/* This should never be called with the GGL */
-	return NULL;
-#else
    int total_assigns;
    char line[501];
    static char *result;
@@ -617,5 +613,4 @@ ReadNames(char *cname, char *filename, long *masters, long *hintDir,
       }
 
    return result;
-#endif
    }

@@ -2346,11 +2346,11 @@ extern int GetHintsDir(void)
 {
     return hintsdirIx;
 }
-/*
- extern boolean MergeCharPaths(outbuffer, charname, filename,
+
+extern boolean MergeCharPaths(outbuffer, charname, filename,
  fortransit, tr, trgroupnum)
  char **outbuffer, *charname, *filename;
- boolean fortransit;
+ boolean fortransit;_GetNumAxes
  Transitions *tr;
  int trgroupnum;
  {
@@ -2410,6 +2410,3 @@ extern int GetHintsDir(void)
  FreePathElements(0, dirCount);
  return ok;
  }
- 
- 
- */

@@ -504,7 +504,7 @@ private procedure ParseString(s) const char * s; {
 				{
 				bezGlyphName[63] = 0;
 				sprintf (globmsg, 
-					"Bad input file.  Glyph name  %s is greater than 32 chars.\n",
+					"Bad input file.  Glyph name  %s is greater than 64 chars.\n",
 					bezGlyphName);
 				  LogMsg(globmsg, LOGERROR, NONFATALERROR, TRUE);
 						}

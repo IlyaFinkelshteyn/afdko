@@ -706,19 +706,10 @@ void SaveFile() {
 		e = e->next;
 	}
 	ws("ed\n");
-#ifdef ISLIB
-	fclose(outputfile);
-#endif
 
-#ifndef IS_LIB
-	if (featurefiledata) {
-		sprintf(outfile, "%s", fileName);
-	}
-	else {
-#endif
-		sprintf(outfile, "%s%s", outPrefix, fileName);
-#ifndef IS_LIB
-	}
-	RenameFile(tempfilename, outfile);
-#endif
+        if (outputfile != NULL) {
+            sprintf(outfile, "%s%s%s", outPrefix, fileName, fileSuffix);
+            fclose(outputfile);
+            RenameFile(tempfilename, outfile);
+      }
 }

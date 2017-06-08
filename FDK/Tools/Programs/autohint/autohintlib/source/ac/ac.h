@@ -206,6 +206,8 @@ extern PClrVal Vcoloring, Hcoloring, Vprimary, Hprimary, valList;
 extern char * fileName;
 extern char outPrefix[MAXPATHLEN], *outSuffix;
 extern char inPrefix[MAXPATHLEN], *inSuffix;
+extern char *fileSuffix;
+
 extern PClrSeg segLists[4]; /* left, right, top, bot */
 extern PClrPoint pointList, *ptLstArray;
 extern integer ptLstIndex, numPtLsts, maxPtLsts;
@@ -484,3 +486,15 @@ public procedure AddHStem();
 
 public procedure AddCharExtremes();
 public procedure AddStemExtremes ();
+public boolean AutoColor(
+                         boolean release,
+                         boolean fixStems,
+                         boolean debug,
+                         boolean extracolor,
+                         boolean changeChar,
+                         short total_files,
+                         char *fileNamePtr[],
+                         boolean quiet,
+                         boolean doAll,
+                         boolean roundCoords,
+                         boolean doLog);

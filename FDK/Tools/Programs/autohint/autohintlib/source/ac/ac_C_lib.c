@@ -251,14 +251,57 @@ int cleanup(short code)
 	return 0; /* we dont actually ever get here */
 }
 
+ACLIB_API int  AutoColorFiles(const char *fontinfo, int allowEdit, int allowHintSub, int roundCoords, short total_files, char *fileNamePtr[], int debug)
+{
+    int value, result;
+    
+    
+    if (ParseFontInfo(fontinfo))
+        return AC_FontinfoParseFail;
+    
+    set_errorproc(cleanup);
+    value = setjmp(aclibmark);
+    
+    if(value==-1){
+        /* a fatal error occurred soemwhere. */
+        FreeFontInfoArray();
+        return AC_FatalError;
+        
+    }else if(value==1){
+        /* AutoColor was called successfully */
+        FreeFontInfoArray();
+    }
+    else
+    {
+    bezoutputactual=0;
+    bezoutput=NULL;
+    
+    result = AutoColor(
+                       FALSE, /* whether any new coloring should cause error */
+                       FALSE,  /*fixStems*/
+                       (boolean)debug, /*debug*/
+                       allowHintSub, /* extracolor*/
+                       allowEdit, /*editChars*/
+                       total_files,
+                       fileNamePtr,
+                       FALSE, /*quiet*/
+                       FALSE, /* doAll*/
+                       roundCoords, /* doAll*/
+                       FALSE);/* do log */
+    /* result == TRUE is good */
+    /* The following call to cleanup() always returns control to just after the setjmp() function call above,,
+     but with value set to 1 if success, or -1 if not */
+    cleanup( (result == TRUE) ? OK: NONFATALERROR);
+    }
+    
+    return AC_UnknownError; /*Shouldn't get here*/
+}
 
-ACLIB_API int  AutoColorString(const char *srcbezdata, const char *fontinfo, char *dstbezdata, int *length, int allowEdit, int allowHintSub, int roundCoords, int debug)
+
+ACLIB_API int  AutoColorString(const char *srcbezdata, const char *fontinfo, char *dstbezdata, int *length, int allowEdit, int allowHintSub, int roundCoords, short total_files, char *fileNamePtr[], int debug)
 {
 	int value, result;
-	char *names[]={""};
 	
-	if (!srcbezdata)
-		return AC_InvalidParameterError;
 
 	if (ParseFontInfo(fontinfo))
 		return AC_FontinfoParseFail;
@@ -319,8 +362,8 @@ ACLIB_API int  AutoColorString(const char *srcbezdata, const char *fontinfo, cha
 			   (boolean)debug, /*debug*/
 			   allowHintSub, /* extracolor*/ 
 			   allowEdit, /*editChars*/ 
-			   1,
-		       names, 
+			   total_files,
+		       fileNamePtr,
 			   FALSE, /*quiet*/ 
                 FALSE, /* doAll*/
                 roundCoords, /* doAll*/

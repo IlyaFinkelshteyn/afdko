@@ -285,16 +285,10 @@ public boolean AutoColor(
      DoArgs since they should always be rehinted, even in release mode. */
   if (total_files > 0) /* user specified file names */
     {
-    	if (fileNamePtr[0][0]=='\0')
     		result = DoArgsIgnoreTime(total_files, fileNamePtr, extracolor, &renameLog, release);
     
     }
-#ifndef IS_GGL
-	if (doAll)
-   	 if (scalinghints)
-      result = DoAllIgnoreTime(extracolor, IncludeFile);
-#endif
-
+ 
   return(result);
 }
 

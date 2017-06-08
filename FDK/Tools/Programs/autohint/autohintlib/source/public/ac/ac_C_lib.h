@@ -112,8 +112,9 @@ extern AC_RETRYPTR reportRetryCB;
  * as *length. If the space allocated is insufficient for the target bezdata, an error will be returned
  * and *length will be set to the desired size.
  */
-ACLIB_API int AutoColorString(const char *srcbezdata, const char *fontinfo, char *dstbezdata, int *length, int allowEdit, int allowHintSub, int roundCoords, int debug);
+ACLIB_API int  AutoColorString(const char *srcbezdata, const char *fontinfo, char *dstbezdata, int *length, int allowEdit, int allowHintSub, int roundCoords, short total_files, char *fileNamePtr[], int debug);
 
+ACLIB_API int  AutoColorFiles(const char *fontinfo, int allowEdit, int allowHintSub, int roundCoords, short total_files, char *fileNamePtr[], int debug);
 /*
  * Function: AC_initCallGlobals
  ****************************

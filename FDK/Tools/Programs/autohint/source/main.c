@@ -17,8 +17,8 @@ This software is licensed as OpenSource, under the Apache License, Version 2.0. 
 const char *C_ProgramVersion = "1.65240";
 const char *reportExt = ".rpt";
 const char *dfltExt = ".new";
-char *bezName = NULL;
-char *fileSuffix = NULL;
+char *bezName = ".new";
+char *fileSuffix;
 FILE *reportFile = NULL;
 
 boolean verbose = TRUE; /* if TRUE don't number of characters processed. */
@@ -397,59 +397,69 @@ int main(int argc, char *argv[])
 
 	AC_SetReportCB(reportCB, verbose);
 	argi = firstFileNameIndex - 1;
-	while (++argi < argc) {
-		char *bezdata;
-		char *output;
-		size_t outputsize = 0;
-		bezName = argv[argi];
-		if (!argumentIsBezData) {
-			bezdata = getFileData(bezName);
-		}
-		else {
-			bezdata = bezName;
-		}
-		outputsize = 4 * strlen(bezdata);
-		output = malloc(outputsize);
-
-		if (!argumentIsBezData && (doAligns || doStems)) {
-			openReportFile(bezName, fileSuffix);
-		}
-
-		result = AutoColorString(bezdata, fontinfo, output, (int *)&outputsize, allowEdit, allowHintSub, roundCoords, debug);
-		if (result == AC_DestBuffOfloError)
-        {
-			if (reportFile != NULL) {
-				closeReportFile();
-                if (!argumentIsBezData && (doAligns || doStems)) {
-                    openReportFile(bezName, fileSuffix);
-                }
+    
+    if (total_files > 1)
+    {
+        char **fileNamePtr = &argv[firstFileNameIndex];
+        result = AutoColorFiles(fontinfo, allowEdit, allowHintSub, roundCoords, total_files, fileNamePtr, debug);
+    }
+    else
+    {
+        while (++argi < argc) {
+            char *bezdata;
+            char *output;
+            char *stubNames[] = {""};
+            size_t outputsize = 0;
+            bezName = argv[argi];
+            if (!argumentIsBezData) {
+                bezdata = getFileData(bezName);
             }
-            free(output);
+            else {
+                bezdata = bezName;
+            }
+            outputsize = 4 * strlen(bezdata);
             output = malloc(outputsize);
-            /* printf("NOTE: trying again. Input size %d output size %d.\n", strlen(bezdata), outputsize); */
-            AC_SetReportCB(reportCB, FALSE);
-            result = AutoColorString(bezdata, fontinfo, output, (int *)&outputsize, allowEdit, allowHintSub, roundCoords, debug);
-            AC_SetReportCB(reportCB, verbose);
-        }
-        
-        if (reportFile != NULL) {
-            closeReportFile();
-        }
-        else {
-            if ((outputsize != 0) && (result == AC_Success)) {
-                if (!argumentIsBezData) {
-                    writeFileData(bezName, output, fileSuffix);
+            
+            if (!argumentIsBezData && (doAligns || doStems)) {
+                openReportFile(bezName, fileSuffix);
+            }
+            
+            result = AutoColorString(bezdata, fontinfo, output, (int *)&outputsize, allowEdit, allowHintSub, roundCoords,1, stubNames, debug);
+            if (result == AC_DestBuffOfloError)
+            {
+                if (reportFile != NULL) {
+                    closeReportFile();
+                    if (!argumentIsBezData && (doAligns || doStems)) {
+                        openReportFile(bezName, fileSuffix);
+                    }
                 }
-                else {
-                    printf("%s", output);
+                free(output);
+                output = malloc(outputsize);
+                /* printf("NOTE: trying again. Input size %d output size %d.\n", strlen(bezdata), outputsize); */
+                AC_SetReportCB(reportCB, FALSE);
+                result = AutoColorString(bezdata, fontinfo, output, (int *)&outputsize, allowEdit, allowHintSub, roundCoords, 1,  stubNames, debug);
+                AC_SetReportCB(reportCB, verbose);
+            }
+            
+            if (reportFile != NULL) {
+                closeReportFile();
+            }
+            else {
+                if ((outputsize != 0) && (result == AC_Success)) {
+                    if (!argumentIsBezData) {
+                        writeFileData(bezName, output, fileSuffix);
+                    }
+                    else {
+                        printf("%s", output);
+                    }
                 }
             }
+            
+            free(output);
+            main_cleanup((result == AC_Success) ? OK : FATALERROR);
         }
-        
-		free(output);
-		main_cleanup((result == AC_Success) ? OK : FATALERROR);
-	}
-
+    }
+    
 	return 0;
 }
 /* end of main */
